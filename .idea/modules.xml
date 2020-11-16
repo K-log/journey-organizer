@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/journey-organizer.iml" filepath="$PROJECT_DIR$/.idea/journey-organizer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/rpg-organizer.iml" filepath="$PROJECT_DIR$/.idea/rpg-organizer.iml" />
     </modules>
   </component>
 </project>
