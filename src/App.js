@@ -3,7 +3,7 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
-import TimelineDisplay from './components/TimelineDisplay'
+import JourneyTimeline from './components/JourneyTimeline'
 
 function App() {
   return (
@@ -11,11 +11,11 @@ function App() {
       <AppBar position='sticky'>
         <Toolbar>
           <Typography variant='h6'>
-            RPG Organizer
+            Journey Organizer
           </Typography>
         </Toolbar>
       </AppBar>
-      <TimelineDisplay/>
+      <JourneyTimeline/>
     </Container>
   )
 }

@@ -10,8 +10,7 @@ import Timeline from '@material-ui/lab/Timeline'
 import AddIcon from '@material-ui/icons/Add'
 import Button from '@material-ui/core/Button'
 import { EditorState } from 'draft-js'
-
-
+import styled from 'styled-components'
 import TimelineItemEditor from './TimelineItemEditor'
 
 const testTimelineData = [
@@ -38,7 +37,11 @@ const testTimelineData = [
 ]
 
 
-export default class TimelineDisplay extends Component {
+const TimelinePaper = styled(Paper)`
+  padding: 0.5rem;
+`
+
+export default class JourneyTimeline extends Component {
 
   state = {
     timelineItems: testTimelineData,
@@ -52,16 +55,25 @@ export default class TimelineDisplay extends Component {
         {
           title: 'New Item',
           summary: 'A newly added item. Click to edit!',
-          "content": EditorState.createEmpty()
+          content: EditorState.createEmpty()
         },
         ...state.timelineItems
       ]}))
   }
 
   handleEditorClose = updatedItem => {
-    const { timelineItems, curItemIndex } = this.state
-    timelineItems[curItemIndex] = updatedItem
-    this.setState({curItemIndex: null, timelineItems})
+    const {
+      timelineItems,
+      curItemIndex
+    } = this.state
+
+    if(updatedItem) {
+      timelineItems[curItemIndex] = updatedItem
+
+      this.setState({ curItemIndex: null, timelineItems })
+    } else {
+      this.setState({ curItemIndex: null })
+    }
   }
 
   renderTimelineItem = ({title, summary, content}, index, array) => (
@@ -71,12 +83,12 @@ export default class TimelineDisplay extends Component {
         {index !== array.length-1 && <TimelineConnector/>}
       </TimelineSeparator>
       <TimelineContent onClick={() => this.setState({curItemIndex: index})}>
-        <Paper elevation={3}>
+        <TimelinePaper elevation={3}>
           <Typography variant='h6' component='h6'>
             {title}
           </Typography>
           <Typography variant='subtitle1' component='span'>{summary}</Typography>
-        </Paper>
+        </TimelinePaper>
       </TimelineContent>
     </TimelineItem>
   )
@@ -85,8 +97,8 @@ export default class TimelineDisplay extends Component {
     const { timelineItems, curItemIndex } = this.state
 
     return (
-      <div style={{maxWidth: '80%'}}>
-        <TimelineItemEditor item={timelineItems[curItemIndex] ?? curItemIndex} onClose={this.handleEditorClose}/>
+      <div>
+        <TimelineItemEditor item={timelineItems[curItemIndex] ?? null} onClose={this.handleEditorClose}/>
         <Timeline align='alternate'>
           <TimelineItem>
             <TimelineSeparator>

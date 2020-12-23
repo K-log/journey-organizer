@@ -5,8 +5,30 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
-import OutlinedInput from '@material-ui/core/OutlinedInput'
+import TextField from '@material-ui/core/TextField'
 import CustomEditor from './CustomEditor'
+import styled from 'styled-components'
+
+const EditDialog = styled(Dialog)`
+  height: 100%;
+  
+  .edit-dialog-paper {
+    height: 100%;
+  }
+`
+
+const EditDialogContent = styled(DialogContent)`
+  height: 100%;
+`
+
+const TitleTextField = styled(TextField)`
+  width: 30%;
+  margin-right: 2rem;
+`
+
+const SummaryTextField = styled(TextField)`
+  width: calc(70% - 2rem);
+`
 
 export default class TimelineItemEditor extends Component {
   state = {
@@ -26,8 +48,13 @@ export default class TimelineItemEditor extends Component {
     }
   }
 
-  handleClose = () => {
-    const { title, summary, editorState } = this.state
+  handleSave = () => {
+    const {
+      title,
+      summary,
+      editorState
+    } = this.state
+
     this.props.onClose({ title, summary, content: editorState })
   }
 
@@ -41,29 +68,44 @@ export default class TimelineItemEditor extends Component {
     const { title, summary, editorState } = this.state
 
     return (
-      <Dialog
+      <EditDialog
         open={true}
         onClose={this.handleClose}
         scroll='paper'
         fullWidth
         maxWidth='md'
+        PaperProps={{
+          className: 'edit-dialog-paper'
+        }}
       >
         <DialogTitle disableTypography>
-          <OutlinedInput label='Title' required value={title} onChange={event => this.setState({title: event.target.value})}/>
-          <OutlinedInput label='Summary' required value={summary} onChange={event => this.setState({summary: event.target.value})}/>
+          <TitleTextField
+            label='Title'
+            required
+            variant='outlined'
+            value={title}
+            onChange={e => this.setState({title: e.target.value})}
+          />
+          <SummaryTextField
+            label='Summary'
+            required
+            variant='outlined'
+            value={summary}
+            onChange={e => this.setState({summary: e.target.value})}
+          />
         </DialogTitle>
-        <DialogContent dividers>
+        <EditDialogContent dividers>
           <CustomEditor editorState={editorState} onChange={this.onChange}/>
-        </DialogContent>
+        </EditDialogContent>
         <DialogActions>
-          <Button autoFocus onClick={this.handleClose} color="primary">
+          <Button autoFocus onClick={e => this.props.onClose()} color='primary'>
             Cancel
           </Button>
-          <Button onClick={this.handleClose} color="primary">
+          <Button onClick={this.handleSave} color='primary'>
             Save
           </Button>
         </DialogActions>
-      </Dialog>
+      </EditDialog>
     )
   }
 }
