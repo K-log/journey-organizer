@@ -7,7 +7,7 @@ import JourneyTimeline from './components/JourneyTimeline'
 
 function App() {
   return (
-    <Container disableGutters maxWidth='md' style={{background: '#e5e5e5', height: '100%'}}>
+    <Container disableGutters maxWidth='md' style={{background: '#e5e5e5', minHeight: '100vh'}}>
       <AppBar position='sticky'>
         <Toolbar>
           <Typography variant='h6'>

@@ -1,4 +1,4 @@
-import { EditorState } from 'draft-js'
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
 import React, { Component } from 'react'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
@@ -40,11 +40,11 @@ export default class TimelineItemEditor extends Component {
   componentDidUpdate(prevProps) {
     const { item } = this.props
     if(prevProps.item !== item && item) {
-        this.setState({
-          title: item.title,
-          summary: item.summary,
-          editorState: item.content
-        })
+      this.setState({
+        title: item.title,
+        summary: item.summary,
+        editorState: item.content ? EditorState.createWithContent(convertFromRaw(item.content)) : EditorState.createEmpty()
+      })
     }
   }
 
@@ -55,13 +55,16 @@ export default class TimelineItemEditor extends Component {
       editorState
     } = this.state
 
-    this.props.onClose({ title, summary, content: editorState })
+    this.props.onClose({ title, summary, content: convertToRaw(editorState.getCurrentContent()) })
   }
 
   onChange = editorState => this.setState({ editorState })
 
   render() {
-    const { item } = this.props
+    const {
+      item,
+      onClose
+    } = this.props
 
     if(item === null) return null
 
@@ -70,7 +73,7 @@ export default class TimelineItemEditor extends Component {
     return (
       <EditDialog
         open={true}
-        onClose={this.handleClose}
+        onClose={e => onClose()}
         scroll='paper'
         fullWidth
         maxWidth='md'
@@ -98,7 +101,7 @@ export default class TimelineItemEditor extends Component {
           <CustomEditor editorState={editorState} onChange={this.onChange}/>
         </EditDialogContent>
         <DialogActions>
-          <Button autoFocus onClick={e => this.props.onClose()} color='primary'>
+          <Button autoFocus onClick={e => onClose()} color='primary'>
             Cancel
           </Button>
           <Button onClick={this.handleSave} color='primary'>

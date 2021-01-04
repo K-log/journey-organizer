@@ -37,7 +37,6 @@ class CustomEditor extends Component {
           onChange={onChange}
           onHandleKeyCommand={this.handleKeyCommand}
           placeholder='Write a story...'
-          autoComplete={true}
           spellCheck={true}
         />
       </Wrap>

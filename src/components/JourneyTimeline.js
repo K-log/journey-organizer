@@ -9,44 +9,37 @@ import Paper from '@material-ui/core/Paper'
 import Timeline from '@material-ui/lab/Timeline'
 import AddIcon from '@material-ui/icons/Add'
 import Button from '@material-ui/core/Button'
-import { EditorState } from 'draft-js'
 import styled from 'styled-components'
 import TimelineItemEditor from './TimelineItemEditor'
-
-const testTimelineData = [
-  {
-    "title" : "First Stop",
-    "summary": "First stop on a long adventure.",
-    "content": EditorState.createEmpty()
-  },
-  {
-    "title" : "Second Stop",
-    "summary": "Second stop on a long adventure.",
-    "content": EditorState.createEmpty()
-  },
-  {
-    "title" : "Third Stop",
-    "summary": "Third stop on a long adventure.",
-    "content": EditorState.createEmpty()
-  },
-  {
-    "title" : "Fourth Stop",
-    "summary": "Fourth stop on a long adventure.",
-    "content": EditorState.createEmpty()
-  }
-]
 
 
 const TimelinePaper = styled(Paper)`
   padding: 0.5rem;
+  cursor: pointer;
 `
 
 export default class JourneyTimeline extends Component {
 
   state = {
-    timelineItems: testTimelineData,
+    timelineItems: [],
     itemEditorOpen: false,
     curItemIndex: null
+  }
+
+  componentDidMount() {
+    const timeline = JSON.parse(localStorage.getItem('timeline')) ?? []
+    this.setState({ timelineItems: timeline })
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const {
+      timelineItems
+    } = this.state
+
+    if(prevState.timelineItems !== timelineItems) {
+      const timeline = JSON.stringify(timelineItems)
+      localStorage.setItem('timeline', timeline)
+    }
   }
 
   addNewTLItem = () => {
@@ -55,7 +48,7 @@ export default class JourneyTimeline extends Component {
         {
           title: 'New Item',
           summary: 'A newly added item. Click to edit!',
-          content: EditorState.createEmpty()
+          content: null
         },
         ...state.timelineItems
       ]}))
@@ -76,18 +69,23 @@ export default class JourneyTimeline extends Component {
     }
   }
 
+  onItemEdit = index => this.setState({curItemIndex: index})
+
   renderTimelineItem = ({title, summary, content}, index, array) => (
     <TimelineItem key={index}>
       <TimelineSeparator>
         <TimelineDot />
         {index !== array.length-1 && <TimelineConnector/>}
       </TimelineSeparator>
-      <TimelineContent onClick={() => this.setState({curItemIndex: index})}>
+      <TimelineContent
+        onClick={e => this.onItemEdit(index)}
+        style={{ maxWidth: '50%' }}
+      >
         <TimelinePaper elevation={3}>
           <Typography variant='h6' component='h6'>
             {title}
           </Typography>
-          <Typography variant='subtitle1' component='span'>{summary}</Typography>
+          <Typography variant='subtitle1' component='span' noWrap>{summary}</Typography>
         </TimelinePaper>
       </TimelineContent>
     </TimelineItem>
@@ -97,27 +95,25 @@ export default class JourneyTimeline extends Component {
     const { timelineItems, curItemIndex } = this.state
 
     return (
-      <div>
+      <Timeline align='alternate'>
         <TimelineItemEditor item={timelineItems[curItemIndex] ?? null} onClose={this.handleEditorClose}/>
-        <Timeline align='alternate'>
-          <TimelineItem>
-            <TimelineSeparator>
-              <TimelineDot />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Button
-                variant='contained'
-                startIcon={<AddIcon />}
-                onClick={this.addNewTLItem}
-              >
-                Click to add a new item
-              </Button>
-            </TimelineContent>
-          </TimelineItem>
-          {timelineItems.map(this.renderTimelineItem)}
-        </Timeline>
-      </div>
+        <TimelineItem>
+          <TimelineSeparator>
+            <TimelineDot />
+            <TimelineConnector />
+          </TimelineSeparator>
+          <TimelineContent>
+            <Button
+              variant='contained'
+              startIcon={<AddIcon />}
+              onClick={this.addNewTLItem}
+            >
+              Click to add a new item
+            </Button>
+          </TimelineContent>
+        </TimelineItem>
+        {timelineItems.map(this.renderTimelineItem)}
+      </Timeline>
     )
   }
 }
